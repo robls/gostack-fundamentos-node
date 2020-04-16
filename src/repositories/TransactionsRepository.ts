@@ -27,16 +27,23 @@ class TransactionsRepository {
     return this.balance;
   }
 
+  public checkIfBalanceIsNegative(type: string, value: number): boolean {
+    if (type === 'outcome') {
+      const diff = this.balance.total - value;
+      if (diff < 0) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
   public create({ title, type, value }: Transaction): Transaction {
     const transaction = new Transaction({ title, type, value });
 
     if (type === 'income') {
       this.balance.income += value;
-    } else if (type === 'outcome') {
-      const diff = this.balance.total - value;
-      if (diff < 0) {
-        throw Error('Transaction exceeds balance limits.');
-      }
+    } else {
       this.balance.outcome += value;
     }
 

@@ -16,7 +16,18 @@ class CreateTransactionService {
 
   public execute({ title, value, type }: Request): Transaction {
     const transaction = new Transaction({ title, value, type });
+
+    const isBalanceNegative = this.transactionsRepository.checkIfBalanceIsNegative(
+      type,
+      value,
+    );
+
+    if (isBalanceNegative) {
+      throw Error('Transaction exceeds balance limits.');
+    }
+
     this.transactionsRepository.create(transaction);
+
     return transaction;
   }
 }
