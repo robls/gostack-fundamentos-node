@@ -38,6 +38,15 @@ class TransactionsRepository {
     return false;
   }
 
+  private updateBalance(): void {
+    this.balance.total = this.transactions.reduce((acc, curr) => {
+      if (curr.type === 'income') {
+        return acc + curr.value;
+      }
+      return acc - curr.value;
+    }, 0);
+  }
+
   public create({ title, type, value }: Transaction): Transaction {
     const transaction = new Transaction({ title, type, value });
 
@@ -49,12 +58,7 @@ class TransactionsRepository {
 
     this.transactions.push(transaction);
 
-    this.balance.total = this.transactions.reduce((acc, curr) => {
-      if (curr.type === 'income') {
-        return acc + curr.value;
-      }
-      return acc - curr.value;
-    }, 0);
+    this.updateBalance();
 
     return transaction;
   }
